@@ -1,7 +1,5 @@
-use hyper::service::service_fn;
-use hyper::service::Service;
-use hyper::Server;
-use hyper::{body::HttpBody, service::make_service_fn, Body, Method, Request, Response};
+use hyper::service::{make_service_fn, service_fn};
+use hyper::{Body, Method, Request, Response, Server};
 use std::{convert::Infallible, net::SocketAddr};
 
 #[derive(Clone)]
@@ -17,10 +15,8 @@ async fn handler(_context: AppContext, req: Request<Body>) -> Result<Response<Bo
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
-    let context = AppContext {};
-
     let make_service = make_service_fn(move |_conn| {
-        let context = context.clone();
+        let context = AppContext {};
 
         let service = service_fn(move |req| handler(context.clone(), req));
         async move { Ok::<_, anyhow::Error>(service) }
